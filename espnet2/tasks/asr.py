@@ -33,7 +33,8 @@ from espnet2.asr.encoder.transformer_encoder import TransformerEncoder
 from espnet2.asr.encoder.vgg_rnn_encoder import VGGRNNEncoder
 from espnet2.asr.espnet_model import ESPnetASRModel
 from espnet2.asr.frontend.abs_frontend import AbsFrontend
-from espnet2.asr.frontend.default import DefaultFrontend
+#from espnet2.asr.frontend.default import DefaultFrontend
+from espnet2.asr.frontend.wav2vec import Wav2vecFrontend
 from espnet2.asr.frontend.windowing import SlidingWindow
 from espnet2.asr.preencoder.abs_preencoder import AbsPreEncoder
 from espnet2.asr.preencoder.sinc import LightweightSincConvs
@@ -55,12 +56,19 @@ from espnet2.utils.types import int_or_none
 from espnet2.utils.types import str2bool
 from espnet2.utils.types import str_or_none
 
+#frontend_choices = ClassChoices(
+#    name="frontend",
+#    classes=dict(default=DefaultFrontend, sliding_window=SlidingWindow),
+#    type_check=AbsFrontend,
+#    default="default",
+#)
 frontend_choices = ClassChoices(
     name="frontend",
-    classes=dict(default=DefaultFrontend, sliding_window=SlidingWindow),
+    classes=dict(wav2vec=Wav2vecFrontend, ),
     type_check=AbsFrontend,
-    default="default",
+    default="wav2vec",
 )
+
 specaug_choices = ClassChoices(
     name="specaug",
     classes=dict(specaug=SpecAug),
@@ -352,7 +360,7 @@ class ASRTask(AbsTask):
         if args.input_size is None:
             # Extract features in the model
             frontend_class = frontend_choices.get_class(args.frontend)
-            frontend = frontend_class(**args.frontend_conf)
+            frontend = frontend_class()
             input_size = frontend.output_size()
         else:
             # Give features from data-loader

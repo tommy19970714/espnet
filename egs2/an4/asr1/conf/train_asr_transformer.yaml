@@ -11,6 +11,11 @@ best_model_criterion:
     - max
 keep_nbest_models: 10
 
+frontend: wav2vec
+frontend_conf:
+    model_path: /home/toshiki/Downloads/wav2vec_vox_960h_pl.pt
+    embedding_dim: 768
+
 encoder: transformer
 encoder_conf:
     output_size: 256
